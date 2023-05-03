@@ -34,7 +34,7 @@ export function getPrompts(req, res) {
 export function getStories(req, res) {
 
     let skip = req.query.skip || 0;
-    Story.find({}, undefined, {skip, limit: 5}).then((items) => res.json(items));
+    Story.find({}, undefined, {skip, limit: 10}).sort({date: -1}).then((items) => res.json(items));
 }
 
 export function lockPrompt(req, res) {
@@ -48,15 +48,19 @@ export function lockPrompt(req, res) {
 
 export function createStory(req, res) {
 
-  const {prompt, story} = (req.body);
+  try {
+    const {prompt, story} = (req.body);
 
-  let newStory = new Story({
-    prompt: prompt,
-    story: story
-  })
-
-  newStory.save();
-
-  res.send("Success!");
+    let newStory = new Story({
+      prompt: prompt,
+      story: story,
+    })
+  
+    newStory.save();
+  
+    res.send("Success!");
+  } catch {
+    res.send("Failure");
+  }
 
 }
